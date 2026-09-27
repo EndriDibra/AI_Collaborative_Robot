@@ -659,6 +659,7 @@ class CyberLogoHeader(QWidget):
 
 
 # --- Futuristic Cyber Intro Screen ---
+# --- Futuristic Cyber Intro Screen ---
 class CyberCobotSplashScreen(QWidget):
     """Futuristic Cyber-Industrial Fraunhofer Intro Splash with Audio Soundtrack."""
 
@@ -674,17 +675,13 @@ class CyberCobotSplashScreen(QWidget):
         )
 
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
         self.setFixedSize(760, 500)
 
-        # Absolute paths for window icon
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        hmi_logo_jpg = os.path.join(BASE_DIR, "HMI_Logo.jpg")
-        hmi_logo_png = os.path.join(BASE_DIR, "HMI_Logo.png")
-
-        if os.path.exists(hmi_logo_jpg):
-            self.setWindowIcon(QIcon(hmi_logo_jpg))
-        elif os.path.exists(hmi_logo_png):
-            self.setWindowIcon(QIcon(hmi_logo_png))
+        if os.path.exists("HMI_Logo.jpg"):
+            self.setWindowIcon(QIcon("HMI_Logo.jpg"))
+        elif os.path.exists("HMI_Logo.png"):
+            self.setWindowIcon(QIcon("HMI_Logo.png"))
 
         # Setup Soundtrack Player
         self.intro_player = QMediaPlayer(self)
@@ -716,10 +713,8 @@ class CyberCobotSplashScreen(QWidget):
         inner_layout.setContentsMargins(22, 14, 22, 14)
         inner_layout.setSpacing(0)
 
-        # Update the logo header instantiation with the absolute path
-        fraunhofer_logo_path = os.path.join(BASE_DIR, "fraunhofer_logo.png")
-        self.logo_header = CyberLogoHeader(fraunhofer_logo_path, self)
-        
+        self.logo_header = CyberLogoHeader("fraunhofer_logo.png", self)
+
         sub_title = QLabel("AI-POWERED COBOT HMI", self)
         sub_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         sub_title.setFont(QFont("Segoe UI", 9, QFont.Weight.Bold))
@@ -769,18 +764,14 @@ class CyberCobotSplashScreen(QWidget):
         self.fade_anim.start()
         self.play_soundtrack()
 
-        QTimer.singleShot(3200, self.finish_intro)
+        QTimer.singleShot(5000, self.finish_intro)
 
     def play_soundtrack(self):
-        """Play intro.mp3 using an absolute path."""
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        sound_path = os.path.join(base_dir, "intro.mp3")
+        """Play intro.mp3 if it exists in the working directory."""
+        sound_path = "intro.mp3"
         if os.path.exists(sound_path):
-            try:
-                self.intro_player.setSource(QUrl.fromLocalFile(sound_path))
-                self.intro_player.play()
-            except Exception as e:
-                print(f"Audio playback skipped: {e}")
+            self.intro_player.setSource(QUrl.fromLocalFile(sound_path))
+            self.intro_player.play()
 
     def stop_soundtrack(self):
         """Stop audio playback cleanly when transitioning."""
@@ -809,14 +800,10 @@ class CobotControlHMI(QWidget):
         self.setWindowTitle("AI COBOT HMI")
         self.resize(540, 400)
 
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        hmi_logo_jpg = os.path.join(BASE_DIR, "HMI_Logo.jpg")
-        hmi_logo_png = os.path.join(BASE_DIR, "HMI_Logo.png")
-
-        if os.path.exists(hmi_logo_jpg):
-            self.setWindowIcon(QIcon(hmi_logo_jpg))
-        elif os.path.exists(hmi_logo_png):
-            self.setWindowIcon(QIcon(hmi_logo_png))
+        if os.path.exists("HMI_Logo.jpg"):
+            self.setWindowIcon(QIcon("HMI_Logo.jpg"))
+        elif os.path.exists("HMI_Logo.png"):
+            self.setWindowIcon(QIcon("HMI_Logo.png"))
 
         self.setStyleSheet("""
             QWidget {
@@ -1038,8 +1025,12 @@ class CobotControlHMI(QWidget):
 
 # --- Application Entry Point --- 
 if __name__ == "__main__":
-    
     app = QApplication(sys.argv)
+
+    if os.path.exists("HMI_Logo.jpg"):
+        app.setWindowIcon(QIcon("HMI_Logo.jpg"))
+    elif os.path.exists("HMI_Logo.png"):
+        app.setWindowIcon(QIcon("HMI_Logo.png"))
 
     def launch_main_window():
         global main_window
@@ -1049,4 +1040,4 @@ if __name__ == "__main__":
     intro = CyberCobotSplashScreen(on_finish_callback=launch_main_window)
     intro.show()
 
-    sys.exit(app.exec())
+    sys.exit(app.exec()) 
